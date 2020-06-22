@@ -1,0 +1,13 @@
+name: XeraHomes
+version: 1.0.0
+main: me.alexprogrammerde.XeraHomes.XeraHomes
+api-version: "1.16"
+author: AlexProgrammerDE
+description: Display your ingame stats in the web.
+commands:
+  home:
+    description: Teleport to your homes
+  sethome:
+    description: Sets a home
+  delhome:
+    description: Deletes a home
