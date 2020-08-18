@@ -1,6 +1,7 @@
 package me.alexprogrammerde.XeraHomes;
 
 import com.mysql.jdbc.Connection;
+import me.alexprogrammerde.XeraHomes.commands.DelHome;
 import me.alexprogrammerde.XeraHomes.commands.Home;
 import me.alexprogrammerde.XeraHomes.commands.SetHome;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -38,6 +39,9 @@ public final class XeraHomes extends JavaPlugin {
 
         getServer().getPluginCommand("home").setExecutor(new Home(this));
         getServer().getPluginCommand("home").setTabCompleter(new Home(this));
+
+        getServer().getPluginCommand("delhome").setExecutor(new DelHome(this));
+        getServer().getPluginCommand("delhome").setTabCompleter(new DelHome(this));
 
         log.info("Enabled XeraHomes.");
     }
