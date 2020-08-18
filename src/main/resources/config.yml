@@ -1,5 +1,6 @@
-port: 25598
-debug: false
-execluded-players:
-  - Notch
-  - Dinnerbone
+mysql:
+  host: "localhost"
+  port: 3306
+  db: "database"
+  username: "username"
+  password: "password"
