@@ -56,12 +56,29 @@ public class SetHome implements CommandExecutor, TabExecutor {
                             }
 
                             if (homes.contains(args[0])) {
-                                player.sendMessage("Theres already a home with that name! remove it first!");
+                                player.sendMessage("There is already a home with that name!");
                             } else {
+                                boolean general = player.hasPermission("xerahomes.default");
+                                boolean donator1 = player.hasPermission("xerahomes.donator1");
+                                boolean donator2 = player.hasPermission("xerahomes.donator2");
+                                boolean admin = player.hasPermission("xerahomes.admin");
+
+                                if (!admin) {
+                                    if (donator2 && homes.size() >= 15) {
+                                        player.sendMessage("You have too many homes! Donators get more homes. Do: /donate");
+                                        return;
+                                    } else if (donator1 && homes.size() >= 10) {
+                                        player.sendMessage("You have too many homes! Donators get more homes. Do: /donate");
+                                        return;
+                                    } else if (general && homes.size() >= 5) {
+                                        player.sendMessage("You have too many homes! Donators get more homes. Do: /donate");
+                                        return;
+                                    }
+                                }
+
                                 main.statement.executeUpdate("INSERT INTO " + name + " (name, world, x, y, z, yaw, pitch) VALUES ('" + args[0] + "', '" + world + "', '" + x + "', '" + y + "', '" + z + "', '" + yaw + "', '" + pitch + "');");
                                 player.sendMessage("Saved home " + args[0]);
                             }
-                            
                         } catch (SQLException throwables) {
                             throwables.printStackTrace();
                         }
@@ -70,7 +87,7 @@ public class SetHome implements CommandExecutor, TabExecutor {
 
                 savedata.runTaskAsynchronously(main);
             } else {
-                sender.sendMessage("No home name given");
+                sender.sendMessage("No home name given!");
             }
         } else {
             sender.sendMessage("You need to be online to do that!");

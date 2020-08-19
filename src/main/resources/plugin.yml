@@ -11,3 +11,16 @@ commands:
     description: Sets a home
   delhome:
     description: Deletes a home
+permissions:
+  xerahomes.default:
+    description: Allows to set up to 5 homes
+    default: true
+  xerahomes.donator1:
+    description: Allows to set up to 10 homes
+    default: false
+  xerahome.donator2:
+    description: Allows to set up to 15 homes
+    default: false
+  xerahomes.admin:
+    description: Bypasses distance limit and home limit
+    default: op

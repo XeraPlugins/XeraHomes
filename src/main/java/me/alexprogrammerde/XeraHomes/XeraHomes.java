@@ -1,18 +1,17 @@
 package me.alexprogrammerde.XeraHomes;
 
-import com.mysql.jdbc.Connection;
+import co.aikar.idb.BukkitDB;
 import me.alexprogrammerde.XeraHomes.commands.DelHome;
 import me.alexprogrammerde.XeraHomes.commands.Home;
 import me.alexprogrammerde.XeraHomes.commands.SetHome;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
-import java.sql.DriverManager;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Logger;
 
-public final class XeraHomes extends JavaPlugin {
+public class XeraHomes extends JavaPlugin {
     public Connection connection;
     public Statement statement;
 
@@ -20,19 +19,12 @@ public final class XeraHomes extends JavaPlugin {
         Logger log = getLogger();
         this.saveDefaultConfig();
 
-        BukkitRunnable runnable = new BukkitRunnable() {
-            @Override
-            public void run() {
-                try {
-                    openConnection(getConfig().getString("mysql.host"), getConfig().getInt("mysql.port"), getConfig().getString("mysql.db") , getConfig().getString("mysql.username"), getConfig().getString("mysql.password"));
-                    statement = connection.createStatement();
-                } catch (SQLException | ClassNotFoundException throwables) {
-                    throwables.printStackTrace();
-                }
-            }
-        };
-
-        runnable.runTaskAsynchronously(this);
+        try {
+            openConnection(getConfig().getString("mysql.host"), getConfig().getInt("mysql.port"), getConfig().getString("mysql.db") , getConfig().getString("mysql.username"), getConfig().getString("mysql.password"));
+            statement = connection.createStatement();
+        } catch (SQLException | ClassNotFoundException throwables) {
+            throwables.printStackTrace();
+        }
 
         getServer().getPluginCommand("sethome").setExecutor(new SetHome(this));
         getServer().getPluginCommand("sethome").setTabCompleter(new SetHome(this));
@@ -68,9 +60,7 @@ public final class XeraHomes extends JavaPlugin {
                 return;
             }
 
-            Class.forName("com.mysql.jdbc.Driver");
-
-            connection = (Connection) DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true", username, password);
+            connection = BukkitDB.createHikariDatabase(this, username, password, database, host + ":" + port).getConnection();
         }
     }
 }

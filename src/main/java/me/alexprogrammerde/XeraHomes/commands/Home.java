@@ -1,6 +1,8 @@
 package me.alexprogrammerde.XeraHomes.commands;
 
 import me.alexprogrammerde.XeraHomes.XeraHomes;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -30,20 +32,20 @@ public class Home implements CommandExecutor, TabExecutor {
             Player player = (Player) sender;
             String name = player.getName();
 
-            if (args.length > 0) {
-                BukkitRunnable savedata = new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            main.statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + name + "(  " +
-                                    "  name            MEDIUMTEXT NOT NULL," +
-                                    "  world           MEDIUMTEXT NOT NULL," +
-                                    "  x               MEDIUMTEXT NOT NULL," +
-                                    "  y               MEDIUMTEXT NOT NULL," +
-                                    "  z               MEDIUMTEXT NOT NULL," +
-                                    "  yaw             MEDIUMTEXT NOT NULL," +
-                                    "  pitch           MEDIUMTEXT NOT NULL);");
+            BukkitRunnable savedata = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    try {
+                        main.statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + name + "(  " +
+                                "  name            MEDIUMTEXT NOT NULL," +
+                                "  world           MEDIUMTEXT NOT NULL," +
+                                "  x               MEDIUMTEXT NOT NULL," +
+                                "  y               MEDIUMTEXT NOT NULL," +
+                                "  z               MEDIUMTEXT NOT NULL," +
+                                "  yaw             MEDIUMTEXT NOT NULL," +
+                                "  pitch           MEDIUMTEXT NOT NULL);");
 
+                        if (args.length > 0) {
                             ResultSet result = main.statement.executeQuery("SELECT name FROM " + name + ";");
                             List<String> homes = new ArrayList<>();
 
@@ -59,11 +61,24 @@ public class Home implements CommandExecutor, TabExecutor {
                                     @Override
                                     public void run() {
                                         try {
-                                            player.teleport(new Location(Bukkit.getWorld(home.getString("world")), Double.parseDouble(home.getString("x")), Double.parseDouble(home.getString("y")), Double.parseDouble(home.getString("z")), Float.parseFloat(home.getString("yaw")), Float.parseFloat(home.getString("pitch"))));
+                                            Location loc = new Location(Bukkit.getWorld(home.getString("world")), Double.parseDouble(home.getString("x")), Double.parseDouble(home.getString("y")), Double.parseDouble(home.getString("z")), Float.parseFloat(home.getString("yaw")), Float.parseFloat(home.getString("pitch")));
+                                            Location playerloc = player.getLocation();
+
+                                            boolean isspawnx = playerloc.getBlockX() < 1000 && playerloc.getBlockX() > -1000;
+                                            boolean isspawnz = playerloc.getBlockZ() < 1000 && playerloc.getBlockZ() > -1000;
+
+                                            if (isspawnx && isspawnz && !player.hasPermission("xerahomes.admin")) {
+                                                player.sendMessage(playerloc.getBlockX() + "" + playerloc.getBlockZ());
+                                                player.sendMessage("" + (playerloc.getBlockX() < 1000 && playerloc.getBlockX() > -1000));
+                                                player.sendMessage("" + (playerloc.getBlockZ() < 1000 && playerloc.getBlockZ() > -1000));
+                                                player.sendMessage("You need to be 1000 blocks away from spawn to do that!");
+                                            } else {
+                                                player.teleport(loc);
+                                                player.sendMessage("Teleported to " + args[0]);
+                                            }
                                         } catch (SQLException throwables) {
                                             throwables.printStackTrace();
                                         }
-                                        player.sendMessage("Teleported to " + args[0]);
                                     }
                                 };
 
@@ -71,17 +86,38 @@ public class Home implements CommandExecutor, TabExecutor {
                             } else {
                                 player.sendMessage("Theres no home with that name!");
                             }
+                        } else {
+                            ComponentBuilder builder = new ComponentBuilder("Homes: ");
 
-                        } catch (SQLException throwables) {
-                            throwables.printStackTrace();
+                            ResultSet result = main.statement.executeQuery("SELECT name FROM " + name + ";");
+                            List<String> homes = new ArrayList<>();
+
+                            while (result.next()) {
+                                String name = result.getString("name");
+                                homes.add(name);
+                            }
+
+                            boolean first = true;
+
+                            for (String str : homes) {
+                                if (first) {
+                                    first = false;
+                                    builder.append(str).event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/home " + str));
+                                } else {
+                                    builder.append(", ").append(str).event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/home " + str));
+                                }
+                            }
+
+                            player.spigot().sendMessage(builder.create());
                         }
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
                     }
-                };
 
-                savedata.runTaskAsynchronously(main);
-            } else {
-                sender.sendMessage("No home name given");
-            }
+                }
+            };
+
+            savedata.runTaskAsynchronously(main);
         }
 
         return false;
@@ -127,7 +163,7 @@ public class Home implements CommandExecutor, TabExecutor {
 
                     Collections.sort(completion);
 
-                    return homes;
+                    return completion;
                 }
             } catch(SQLException throwables){
                 throwables.printStackTrace();

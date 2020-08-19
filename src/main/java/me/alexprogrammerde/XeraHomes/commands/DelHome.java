@@ -1,6 +1,8 @@
 package me.alexprogrammerde.XeraHomes.commands;
 
 import me.alexprogrammerde.XeraHomes.XeraHomes;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -28,20 +30,21 @@ public class DelHome implements CommandExecutor, TabExecutor {
             Player player = (Player) sender;
             String name = player.getName();
 
-            if (args.length > 0) {
-                BukkitRunnable savedata = new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            main.statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + name + "(  " +
-                                    "  name            MEDIUMTEXT NOT NULL," +
-                                    "  world           MEDIUMTEXT NOT NULL," +
-                                    "  x               MEDIUMTEXT NOT NULL," +
-                                    "  y               MEDIUMTEXT NOT NULL," +
-                                    "  z               MEDIUMTEXT NOT NULL," +
-                                    "  yaw             MEDIUMTEXT NOT NULL," +
-                                    "  pitch           MEDIUMTEXT NOT NULL);");
 
+            BukkitRunnable savedata = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    try {
+                        main.statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + name + "(  " +
+                                "  name            MEDIUMTEXT NOT NULL," +
+                                "  world           MEDIUMTEXT NOT NULL," +
+                                "  x               MEDIUMTEXT NOT NULL," +
+                                "  y               MEDIUMTEXT NOT NULL," +
+                                "  z               MEDIUMTEXT NOT NULL," +
+                                "  yaw             MEDIUMTEXT NOT NULL," +
+                                "  pitch           MEDIUMTEXT NOT NULL);");
+
+                        if (args.length > 0) {
                             ResultSet result = main.statement.executeQuery("SELECT name FROM " + name + ";");
                             List<String> homes = new ArrayList<>();
 
@@ -56,17 +59,38 @@ public class DelHome implements CommandExecutor, TabExecutor {
                             } else {
                                 player.sendMessage("There is no home with that name!");
                             }
+                        } else {
+                            ComponentBuilder builder = new ComponentBuilder("Homes: ");
 
-                        } catch (SQLException throwables) {
-                            throwables.printStackTrace();
+                            ResultSet result = main.statement.executeQuery("SELECT name FROM " + name + ";");
+                            List<String> homes = new ArrayList<>();
+
+                            while (result.next()) {
+                                String name = result.getString("name");
+                                homes.add(name);
+                            }
+
+                            boolean first = true;
+
+                            for (String str : homes) {
+                                if (first) {
+                                    first = false;
+                                    builder.append(str).event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/delhome " + str));
+                                } else {
+                                    builder.append(", ").append(str).event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/delhome " + str));
+                                }
+                            }
+
+                            player.spigot().sendMessage(builder.create());
                         }
-                    }
-                };
 
-                savedata.runTaskAsynchronously(main);
-            } else {
-                sender.sendMessage("No home name given");
-            }
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
+                    }
+                }
+            };
+
+            savedata.runTaskAsynchronously(main);
         } else {
             sender.sendMessage("You need to be online to do that!");
         }
@@ -114,7 +138,7 @@ public class DelHome implements CommandExecutor, TabExecutor {
 
                     Collections.sort(completion);
 
-                    return homes;
+                    return completion;
                 }
             } catch(SQLException throwables){
                 throwables.printStackTrace();
