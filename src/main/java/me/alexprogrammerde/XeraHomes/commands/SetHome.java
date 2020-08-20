@@ -1,6 +1,8 @@
 package me.alexprogrammerde.XeraHomes.commands;
 
 import me.alexprogrammerde.XeraHomes.XeraHomes;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -12,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class SetHome implements CommandExecutor, TabExecutor {
     XeraHomes main;
@@ -27,7 +30,7 @@ public class SetHome implements CommandExecutor, TabExecutor {
             String name = player.getName();
 
             if (args.length > 0) {
-                String world = player.getLocation().getWorld().getName();
+                String world = Objects.requireNonNull(player.getLocation().getWorld()).getName();
                 String x = String.valueOf(player.getLocation().getX());
                 String y = String.valueOf(player.getLocation().getY());
                 String z = String.valueOf(player.getLocation().getZ());
@@ -65,13 +68,13 @@ public class SetHome implements CommandExecutor, TabExecutor {
 
                                 if (!admin) {
                                     if (donator2 && homes.size() >= 15) {
-                                        player.sendMessage("You have too many homes! Donators get more homes. Do: /donate");
+                                        player.spigot().sendMessage(new ComponentBuilder("You have too many homes! Donators get more homes. Do: ").append("/donate").event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/donate")).create());
                                         return;
                                     } else if (donator1 && homes.size() >= 10) {
-                                        player.sendMessage("You have too many homes! Donators get more homes. Do: /donate");
+                                        player.spigot().sendMessage(new ComponentBuilder("You have too many homes! Donators get more homes. Do: ").append("/donate").event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/donate")).create());
                                         return;
                                     } else if (general && homes.size() >= 5) {
-                                        player.sendMessage("You have too many homes! Donators get more homes. Do: /donate");
+                                        player.spigot().sendMessage(new ComponentBuilder("You have too many homes! Donators get more homes. Do: ").append("/donate").event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/donate")).create());
                                         return;
                                     }
                                 }
