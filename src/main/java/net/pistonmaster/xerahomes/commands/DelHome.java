@@ -1,6 +1,6 @@
-package me.alexprogrammerde.XeraHomes.commands;
+package net.pistonmaster.xerahomes.commands;
 
-import me.alexprogrammerde.XeraHomes.XeraHomes;
+import net.pistonmaster.xerahomes.XeraHomes;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.command.Command;
@@ -28,14 +28,13 @@ public class DelHome implements CommandExecutor, TabExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            String name = player.getName();
-
+            String uuid = player.getUniqueId().toString();
 
             BukkitRunnable savedata = new BukkitRunnable() {
                 @Override
                 public void run() {
                     try {
-                        main.statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + name + "(  " +
+                        main.statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + uuid + "(  " +
                                 "  name            MEDIUMTEXT NOT NULL," +
                                 "  world           MEDIUMTEXT NOT NULL," +
                                 "  x               MEDIUMTEXT NOT NULL," +
@@ -45,7 +44,7 @@ public class DelHome implements CommandExecutor, TabExecutor {
                                 "  pitch           MEDIUMTEXT NOT NULL);");
 
                         if (args.length > 0) {
-                            ResultSet result = main.statement.executeQuery("SELECT name FROM " + name + ";");
+                            ResultSet result = main.statement.executeQuery("SELECT name FROM " + uuid + ";");
                             List<String> homes = new ArrayList<>();
 
                             while (result.next()) {
@@ -54,7 +53,7 @@ public class DelHome implements CommandExecutor, TabExecutor {
                             }
 
                             if (homes.contains(args[0])) {
-                                main.statement.executeUpdate("DELETE FROM " + name + " WHERE name='" + args[0] + "';");
+                                main.statement.executeUpdate("DELETE FROM " + uuid + " WHERE name='" + args[0] + "';");
                                 player.sendMessage("Removed home " + args[0]);
                             } else {
                                 player.sendMessage("There is no home with that name!");
@@ -62,7 +61,7 @@ public class DelHome implements CommandExecutor, TabExecutor {
                         } else {
                             ComponentBuilder builder = new ComponentBuilder("Homes: ");
 
-                            ResultSet result = main.statement.executeQuery("SELECT name FROM " + name + ";");
+                            ResultSet result = main.statement.executeQuery("SELECT name FROM " + uuid + ";");
                             List<String> homes = new ArrayList<>();
 
                             while (result.next()) {
@@ -102,10 +101,10 @@ public class DelHome implements CommandExecutor, TabExecutor {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            String name = player.getName();
+            String uuid = player.getUniqueId().toString();
 
             try {
-                main.statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + name + "(  " +
+                main.statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + uuid + "(  " +
                         "  name            MEDIUMTEXT NOT NULL," +
                         "  world           MEDIUMTEXT NOT NULL," +
                         "  x               MEDIUMTEXT NOT NULL," +
@@ -119,7 +118,7 @@ public class DelHome implements CommandExecutor, TabExecutor {
 
             try {
                 if (args.length == 1) {
-                    ResultSet result = main.statement.executeQuery("SELECT name FROM " + name + ";");
+                    ResultSet result = main.statement.executeQuery("SELECT name FROM " + uuid + ";");
                     List<String> homes = new ArrayList<>();
 
                     try {

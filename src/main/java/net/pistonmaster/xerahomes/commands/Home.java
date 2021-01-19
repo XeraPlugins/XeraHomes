@@ -1,6 +1,6 @@
-package me.alexprogrammerde.XeraHomes.commands;
+package net.pistonmaster.xerahomes.commands;
 
-import me.alexprogrammerde.XeraHomes.XeraHomes;
+import net.pistonmaster.xerahomes.XeraHomes;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
@@ -30,13 +30,13 @@ public class Home implements CommandExecutor, TabExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            String name = player.getName();
+            String uuid = player.getUniqueId().toString();
 
             BukkitRunnable savedata = new BukkitRunnable() {
                 @Override
                 public void run() {
                     try {
-                        main.statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + name + "(  " +
+                        main.statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + uuid + "(  " +
                                 "  name            MEDIUMTEXT NOT NULL," +
                                 "  world           MEDIUMTEXT NOT NULL," +
                                 "  x               MEDIUMTEXT NOT NULL," +
@@ -46,7 +46,7 @@ public class Home implements CommandExecutor, TabExecutor {
                                 "  pitch           MEDIUMTEXT NOT NULL);");
 
                         if (args.length > 0) {
-                            ResultSet result = main.statement.executeQuery("SELECT name FROM " + name + ";");
+                            ResultSet result = main.statement.executeQuery("SELECT name FROM " + uuid + ";");
                             List<String> homes = new ArrayList<>();
 
                             while (result.next()) {
@@ -55,7 +55,7 @@ public class Home implements CommandExecutor, TabExecutor {
                             }
 
                             if (homes.contains(args[0])) {
-                                ResultSet home = main.statement.executeQuery("SELECT * FROM " + name + " WHERE name='" + args[0] + "'");
+                                ResultSet home = main.statement.executeQuery("SELECT * FROM " + uuid + " WHERE name='" + args[0] + "'");
                                 home.next();
                                 BukkitRunnable teleport = new BukkitRunnable() {
                                     @Override
@@ -89,7 +89,7 @@ public class Home implements CommandExecutor, TabExecutor {
                         } else {
                             ComponentBuilder builder = new ComponentBuilder("Homes: ");
 
-                            ResultSet result = main.statement.executeQuery("SELECT name FROM " + name + ";");
+                            ResultSet result = main.statement.executeQuery("SELECT name FROM " + uuid + ";");
                             List<String> homes = new ArrayList<>();
 
                             while (result.next()) {
@@ -127,10 +127,10 @@ public class Home implements CommandExecutor, TabExecutor {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            String name = player.getName();
+            String uuid = player.getUniqueId().toString();
 
             try {
-                main.statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + name + "(  " +
+                main.statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + uuid + "(  " +
                         "  name            MEDIUMTEXT NOT NULL," +
                         "  world           MEDIUMTEXT NOT NULL," +
                         "  x               MEDIUMTEXT NOT NULL," +
@@ -144,7 +144,7 @@ public class Home implements CommandExecutor, TabExecutor {
 
             try {
                 if (args.length == 1) {
-                    ResultSet result = main.statement.executeQuery("SELECT name FROM " + name + ";");
+                    ResultSet result = main.statement.executeQuery("SELECT name FROM " + uuid + ";");
                     List<String> homes = new ArrayList<>();
 
                     try {
@@ -165,7 +165,7 @@ public class Home implements CommandExecutor, TabExecutor {
 
                     return completion;
                 }
-            } catch(SQLException throwables){
+            } catch (SQLException throwables){
                 throwables.printStackTrace();
             }
         }

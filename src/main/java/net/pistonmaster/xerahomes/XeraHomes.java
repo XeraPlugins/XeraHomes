@@ -1,9 +1,9 @@
-package me.alexprogrammerde.XeraHomes;
+package net.pistonmaster.xerahomes;
 
 import co.aikar.idb.BukkitDB;
-import me.alexprogrammerde.XeraHomes.commands.DelHome;
-import me.alexprogrammerde.XeraHomes.commands.Home;
-import me.alexprogrammerde.XeraHomes.commands.SetHome;
+import net.pistonmaster.xerahomes.commands.DelHome;
+import net.pistonmaster.xerahomes.commands.Home;
+import net.pistonmaster.xerahomes.commands.SetHome;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -15,11 +15,11 @@ import java.util.logging.Logger;
 public final class XeraHomes extends JavaPlugin {
     public Connection connection;
     public Statement statement;
-    Logger log;
 
+    @Override
     public void onEnable() {
-        log = getLogger();
-        this.saveDefaultConfig();
+        Logger log = getLogger();
+        saveDefaultConfig();
 
         try {
             openConnection(getConfig().getString("mysql.host"), getConfig().getInt("mysql.port"), getConfig().getString("mysql.db") , getConfig().getString("mysql.username"), getConfig().getString("mysql.password"));
@@ -34,19 +34,27 @@ public final class XeraHomes extends JavaPlugin {
 
         if (home != null && sethome != null && delhome != null) {
             home.setExecutor(new Home(this));
-            home.setTabCompleter(new Home(this));
+            if (getConfig().getBoolean("tab")) {
+                home.setTabCompleter(new Home(this));
+            }
 
             sethome.setExecutor(new SetHome(this));
-            sethome.setTabCompleter(new SetHome(this));
+            if (getConfig().getBoolean("tab")) {
+                sethome.setTabCompleter(new SetHome(this));
+            }
 
             delhome.setExecutor(new DelHome(this));
-            delhome.setTabCompleter(new DelHome(this));
+            if (getConfig().getBoolean("tab")) {
+                delhome.setTabCompleter(new DelHome(this));
+            }
         }
 
         log.info("Enabled XeraHomes");
     }
 
+    @Override
     public void onDisable() {
+        Logger log = getLogger();
         log.info("Disabled XeraHomes");
     }
 

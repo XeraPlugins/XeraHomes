@@ -1,6 +1,6 @@
-package me.alexprogrammerde.XeraHomes.commands;
+package net.pistonmaster.xerahomes.commands;
 
-import me.alexprogrammerde.XeraHomes.XeraHomes;
+import net.pistonmaster.xerahomes.XeraHomes;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.command.Command;
@@ -27,7 +27,7 @@ public class SetHome implements CommandExecutor, TabExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            String name = player.getName();
+            String uuid = player.getUniqueId().toString();
 
             if (args.length > 0) {
                 String world = Objects.requireNonNull(player.getLocation().getWorld()).getName();
@@ -41,7 +41,7 @@ public class SetHome implements CommandExecutor, TabExecutor {
                     @Override
                     public void run() {
                         try {
-                            main.statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + name + "(  " +
+                            main.statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + uuid + "(  " +
                                     "  name            MEDIUMTEXT NOT NULL," +
                                     "  world           MEDIUMTEXT NOT NULL," +
                                     "  x               MEDIUMTEXT NOT NULL," +
@@ -50,7 +50,7 @@ public class SetHome implements CommandExecutor, TabExecutor {
                                     "  yaw             MEDIUMTEXT NOT NULL," +
                                     "  pitch           MEDIUMTEXT NOT NULL);");
 
-                            ResultSet result = main.statement.executeQuery("SELECT name FROM " + name + ";");
+                            ResultSet result = main.statement.executeQuery("SELECT name FROM " + uuid + ";");
                             List<String> homes = new ArrayList<>();
 
                             while (result.next()) {
@@ -79,7 +79,7 @@ public class SetHome implements CommandExecutor, TabExecutor {
                                     }
                                 }
 
-                                main.statement.executeUpdate("INSERT INTO " + name + " (name, world, x, y, z, yaw, pitch) VALUES ('" + args[0] + "', '" + world + "', '" + x + "', '" + y + "', '" + z + "', '" + yaw + "', '" + pitch + "');");
+                                main.statement.executeUpdate("INSERT INTO " + uuid + " (name, world, x, y, z, yaw, pitch) VALUES ('" + args[0] + "', '" + world + "', '" + x + "', '" + y + "', '" + z + "', '" + yaw + "', '" + pitch + "');");
                                 player.sendMessage("Saved home " + args[0]);
                             }
                         } catch (SQLException throwables) {

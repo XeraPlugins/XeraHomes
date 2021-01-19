@@ -1,7 +1,7 @@
 name: XeraHomes
 version: 1.0.0
-main: me.alexprogrammerde.XeraHomes.XeraHomes
-api-version: "1.16"
+main: net.pistonmaster.xerahomes.XeraHomes
+api-version: "1.13"
 author: AlexProgrammerDE
 description: Display your ingame stats in the web.
 commands:

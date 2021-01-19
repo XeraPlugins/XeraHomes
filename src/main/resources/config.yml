@@ -4,3 +4,4 @@ mysql:
   db: "database"
   username: "username"
   password: "password"
+tab: true
