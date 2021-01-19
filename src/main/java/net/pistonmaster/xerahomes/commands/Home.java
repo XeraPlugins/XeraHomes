@@ -37,7 +37,7 @@ public class Home implements CommandExecutor, TabExecutor {
                 public void run() {
                     try {
                         main.statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + uuid + "(  " +
-                                "  name            MEDIUMTEXT NOT NULL," +
+                                "  uuid            MEDIUMTEXT NOT NULL," +
                                 "  world           MEDIUMTEXT NOT NULL," +
                                 "  x               MEDIUMTEXT NOT NULL," +
                                 "  y               MEDIUMTEXT NOT NULL," +
@@ -46,16 +46,16 @@ public class Home implements CommandExecutor, TabExecutor {
                                 "  pitch           MEDIUMTEXT NOT NULL);");
 
                         if (args.length > 0) {
-                            ResultSet result = main.statement.executeQuery("SELECT name FROM " + uuid + ";");
+                            ResultSet result = main.statement.executeQuery("SELECT uuid FROM " + uuid + ";");
                             List<String> homes = new ArrayList<>();
 
                             while (result.next()) {
-                                String name = result.getString("name");
-                                homes.add(name);
+                                String uuid = result.getString("uuid");
+                                homes.add(uuid);
                             }
 
                             if (homes.contains(args[0])) {
-                                ResultSet home = main.statement.executeQuery("SELECT * FROM " + uuid + " WHERE name='" + args[0] + "'");
+                                ResultSet home = main.statement.executeQuery("SELECT * FROM " + uuid + " WHERE uuid='" + args[0] + "'");
                                 home.next();
                                 BukkitRunnable teleport = new BukkitRunnable() {
                                     @Override
@@ -89,12 +89,12 @@ public class Home implements CommandExecutor, TabExecutor {
                         } else {
                             ComponentBuilder builder = new ComponentBuilder("Homes: ");
 
-                            ResultSet result = main.statement.executeQuery("SELECT name FROM " + uuid + ";");
+                            ResultSet result = main.statement.executeQuery("SELECT uuid FROM " + uuid + ";");
                             List<String> homes = new ArrayList<>();
 
                             while (result.next()) {
-                                String name = result.getString("name");
-                                homes.add(name);
+                                String uuid = result.getString("uuid");
+                                homes.add(uuid);
                             }
 
                             boolean first = true;
@@ -131,7 +131,7 @@ public class Home implements CommandExecutor, TabExecutor {
 
             try {
                 main.statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + uuid + "(  " +
-                        "  name            MEDIUMTEXT NOT NULL," +
+                        "  uuid            MEDIUMTEXT NOT NULL," +
                         "  world           MEDIUMTEXT NOT NULL," +
                         "  x               MEDIUMTEXT NOT NULL," +
                         "  y               MEDIUMTEXT NOT NULL," +
@@ -144,12 +144,12 @@ public class Home implements CommandExecutor, TabExecutor {
 
             try {
                 if (args.length == 1) {
-                    ResultSet result = main.statement.executeQuery("SELECT name FROM " + uuid + ";");
+                    ResultSet result = main.statement.executeQuery("SELECT uuid FROM " + uuid + ";");
                     List<String> homes = new ArrayList<>();
 
                     try {
                         while (result.next()) {
-                            String home = result.getString("name");
+                            String home = result.getString("uuid");
 
                             homes.add(home);
                         }

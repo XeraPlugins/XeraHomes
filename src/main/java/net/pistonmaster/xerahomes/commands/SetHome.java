@@ -42,7 +42,7 @@ public class SetHome implements CommandExecutor, TabExecutor {
                     public void run() {
                         try {
                             main.statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + uuid + "(  " +
-                                    "  name            MEDIUMTEXT NOT NULL," +
+                                    "  uuid            MEDIUMTEXT NOT NULL," +
                                     "  world           MEDIUMTEXT NOT NULL," +
                                     "  x               MEDIUMTEXT NOT NULL," +
                                     "  y               MEDIUMTEXT NOT NULL," +
@@ -50,16 +50,16 @@ public class SetHome implements CommandExecutor, TabExecutor {
                                     "  yaw             MEDIUMTEXT NOT NULL," +
                                     "  pitch           MEDIUMTEXT NOT NULL);");
 
-                            ResultSet result = main.statement.executeQuery("SELECT name FROM " + uuid + ";");
+                            ResultSet result = main.statement.executeQuery("SELECT uuid FROM " + uuid + ";");
                             List<String> homes = new ArrayList<>();
 
                             while (result.next()) {
-                                String name = result.getString("name");
-                                homes.add(name);
+                                String uuid = result.getString("uuid");
+                                homes.add(uuid);
                             }
 
                             if (homes.contains(args[0])) {
-                                player.sendMessage("There is already a home with that name!");
+                                player.sendMessage("There is already a home with that uuid!");
                             } else {
                                 boolean general = player.hasPermission("xerahomes.default");
                                 boolean donator1 = player.hasPermission("xerahomes.donator1");
@@ -79,7 +79,7 @@ public class SetHome implements CommandExecutor, TabExecutor {
                                     }
                                 }
 
-                                main.statement.executeUpdate("INSERT INTO " + uuid + " (name, world, x, y, z, yaw, pitch) VALUES ('" + args[0] + "', '" + world + "', '" + x + "', '" + y + "', '" + z + "', '" + yaw + "', '" + pitch + "');");
+                                main.statement.executeUpdate("INSERT INTO " + uuid + " (uuid, world, x, y, z, yaw, pitch) VALUES ('" + args[0] + "', '" + world + "', '" + x + "', '" + y + "', '" + z + "', '" + yaw + "', '" + pitch + "');");
                                 player.sendMessage("Saved home " + args[0]);
                             }
                         } catch (SQLException throwables) {
